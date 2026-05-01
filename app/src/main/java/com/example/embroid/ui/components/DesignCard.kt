@@ -1,5 +1,6 @@
 package com.example.embroid.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -11,12 +12,12 @@ import coil.compose.AsyncImage
 import com.example.embroid.data.models.EmbroideryDesign
 
 @Composable
-// NEW: We added 'onAddToCartClick' so the card knows what to do when the button is pressed
-fun DesignCard(design: EmbroideryDesign, onAddToCartClick: () -> Unit) {
+fun DesignCard(design: EmbroideryDesign, onCardClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable { onCardClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
@@ -42,16 +43,6 @@ fun DesignCard(design: EmbroideryDesign, onAddToCartClick: () -> Unit) {
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold
                 )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // NEW: The Add to Cart Button
-                Button(
-                    onClick = onAddToCartClick,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Add to Cart")
-                }
             }
         }
     }

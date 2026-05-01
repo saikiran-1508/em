@@ -10,11 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.embroid.data.models.EmbroideryDesign
 import com.example.embroid.ui.components.DesignCard
-import com.example.embroid.ui.viewmodels.SharedViewModel // NEW IMPORT
+import com.example.embroid.ui.viewmodels.SharedViewModel
 
 @Composable
-// NEW: The door is open! It now accepts the sharedViewModel
-fun HomeScreen(sharedViewModel: SharedViewModel) {
+fun HomeScreen(sharedViewModel: SharedViewModel, onNavigateToDetail: (String) -> Unit) {
 
     val dummyDesigns = List(20) { index ->
         EmbroideryDesign(
@@ -33,10 +32,7 @@ fun HomeScreen(sharedViewModel: SharedViewModel) {
         items(dummyDesigns) { design ->
             DesignCard(
                 design = design,
-                // NEW: When the button is clicked, tell the Brain to add it!
-                onAddToCartClick = {
-                    sharedViewModel.addToCart(design)
-                }
+                onCardClick = { onNavigateToDetail(design.id) }
             )
         }
     }

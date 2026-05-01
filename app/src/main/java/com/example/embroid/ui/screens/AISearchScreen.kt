@@ -31,7 +31,7 @@ import com.example.embroid.ui.viewmodels.SharedViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun AISearchScreen(sharedViewModel: SharedViewModel) {
+fun AISearchScreen(sharedViewModel: SharedViewModel, onNavigateToDetail: (String) -> Unit) {
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var isSearching by remember { mutableStateOf(false) }
     var searchResults by remember { mutableStateOf<List<EmbroideryDesign>>(emptyList()) }
@@ -49,9 +49,7 @@ fun AISearchScreen(sharedViewModel: SharedViewModel) {
         if (selectedImageUri != null) {
             isSearching = true
             searchResults = emptyList()
-
             delay(2000)
-
             searchResults = List(6) { index ->
                 EmbroideryDesign(
                     id = "ai_$index",
@@ -60,15 +58,12 @@ fun AISearchScreen(sharedViewModel: SharedViewModel) {
                     thumbnailUrl = "https://picsum.photos/seed/${index + 100}/400/400"
                 )
             }
-
             isSearching = false
         }
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -121,9 +116,7 @@ fun AISearchScreen(sharedViewModel: SharedViewModel) {
         }
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             OutlinedButton(
@@ -135,22 +128,18 @@ fun AISearchScreen(sharedViewModel: SharedViewModel) {
             ) {
                 Text(if (selectedImageUri == null) "Select from Gallery" else "Change Image")
             }
-
             FilledTonalButton(onClick = { /* Camera logic */ }) {
                 Text("Take Photo")
             }
         }
 
         Divider()
-
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "AI Recommended Matches",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp)
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
         )
 
         Box(
@@ -176,12 +165,9 @@ fun AISearchScreen(sharedViewModel: SharedViewModel) {
                         contentPadding = PaddingValues(4.dp)
                     ) {
                         items(searchResults) { design ->
-                            // This is the updated code that fixed the red error!
                             DesignCard(
                                 design = design,
-                                onAddToCartClick = {
-                                    sharedViewModel.addToCart(design)
-                                }
+                                onCardClick = { onNavigateToDetail(design.id) }
                             )
                         }
                     }

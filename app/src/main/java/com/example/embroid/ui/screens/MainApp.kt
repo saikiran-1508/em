@@ -1,12 +1,9 @@
 package com.example.embroid.ui.screens
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,10 +24,11 @@ fun MainApp() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val topBarTitle = when (currentRoute) {
-        Screen.Home.route -> "Embroid Catalog"
-        Screen.AISearch.route -> "AI Visual Match"
-        Screen.Cart.route -> "Your Cart"
+    val topBarTitle = when {
+        currentRoute == Screen.Home.route -> "Embroid Catalog"
+        currentRoute == Screen.AISearch.route -> "AI Visual Match"
+        currentRoute == Screen.Cart.route -> "Your Cart"
+        currentRoute?.startsWith("detail_screen") == true -> "Product Details"
         else -> "Embroid"
     }
 
@@ -58,16 +56,34 @@ fun MainApp() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) {
-                HomeScreen(sharedViewModel = sharedViewModel)
+                HomeScreen(
+                    sharedViewModel = sharedViewModel,
+                    onNavigateToDetail = { designId ->
+                        navController.navigate("detail_screen/$designId")
+                    }
+                )
             }
 
             composable(Screen.AISearch.route) {
-                // This is the updated code that connects the AI screen to the Brain
-                AISearchScreen(sharedViewModel = sharedViewModel)
+                AISearchScreen(
+                    sharedViewModel = sharedViewModel,
+                    onNavigateToDetail = { designId ->
+                        navController.navigate("detail_screen/$designId")
+                    }
+                )
             }
 
             composable(Screen.Cart.route) {
                 CartScreen(sharedViewModel = sharedViewModel)
+            }
+
+            composable("detail_screen/{designId}") { backStackEntry ->
+                val designId = backStackEntry.arguments?.getString("designId") ?: "0"
+                DesignDetailScreen(
+                    designId = designId,
+                    sharedViewModel = sharedViewModel,
+                    onBackClick = { navController.popBackStack() }
+                )
             }
         }
     }
